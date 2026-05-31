@@ -1,4 +1,5 @@
 ## Directory Structure
+```
 Streaming-Service/
 │
 ├── docs/
@@ -34,6 +35,7 @@ Streaming-Service/
 ├── package-lock.json
 ├── package.json
 └── README.md
+```
 
 First Run: `npm install`, Or The Shorthand: `npm i`
 Then Run: `npm start`, Or For Automatic Restart During Development With nodemon, Run: `npm run dev`
