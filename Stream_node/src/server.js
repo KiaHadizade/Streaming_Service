@@ -53,6 +53,17 @@ app.post('/signup', async (req, res) => {
         if(existingUser.recordset.length > 0) {
             return res.status(409).send("Username already exists")
         }
+
+        const existingEmail =
+            await sql.query`
+                SELECT *
+                FROM Users
+                WHERE email = ${email}
+            `
+        if(existingEmail.recordset.length > 0){
+            return res.status(409).send("Email already exists")
+        }
+        
         // Hash the password before storing it to the database
         const hashedPassword = await bcrypt.hash(password, 10) // Salt rounds = 10
         // Insert the new user into the database
