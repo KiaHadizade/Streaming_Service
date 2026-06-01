@@ -1,5 +1,7 @@
 import express from 'express'
 import bcrypt from "bcrypt"
+import sql from "mssql"
+import { config } from "./config.js"
 
 const app = express()
 
@@ -33,10 +35,24 @@ app.get('/signup', (req, res) => {
 // =========================
 app.post('/signup', async (req, res) => {
     // Extract user data from the request body
-    const { username, password, email, name, last_name } = req.body
+    const { 
+        username,
+        password,
+        email,
+        name,
+        last_name 
+    } = req.body
 
     try {
-
+        const existingUser =
+            await sql.query`
+                SELECT *
+                FROM Users
+                WHERE username = ${username}
+            `
+        if(existingUser.recordset.length > 0) {
+            return res.status(409).send("Username already exists")
+        }
         // Hash the password before storing it to the database
         const hashedPassword = await bcrypt.hash(password, 10) // Salt rounds = 10
         // Insert the new user into the database
@@ -47,7 +63,8 @@ app.post('/signup', async (req, res) => {
                 password,
                 email,
                 name,
-                last_name
+                last_name,
+                role
             )
             VALUES
             (
@@ -55,15 +72,16 @@ app.post('/signup', async (req, res) => {
                 ${hashedPassword},
                 ${email},
                 ${name},
-                ${last_name}
+                ${last_name},
+                'user'
             )
         `
 
-        res.send("User registered successfully") // Send success response
+        res.send("Registration Successful") // Send success response
 
     } catch (error) {
         console.error(error) // Log any errors for debugging
-        res.status(500).send("Registration failed") // Send generic error response
+        res.status(500).send("Registration Failed") // Send generic error response
     }
 })
 
@@ -103,12 +121,24 @@ app.post('/login', async (req, res) => {
 
     } catch(error) {
         console.log(error) // Log server-side errors
-        res.status(500).send("Server error")
+        res.status(500).send("Login Failed") // Server error
     }
 })
 
-// Start Express server
 const PORT = 5000
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
-})
+async function startServer() {
+    try {
+
+        await sql.connect(config)
+        console.log("Connected to SQL Server")
+
+        // Start Express server
+        app.listen(PORT, () => {
+            console.log(`Server running on port ${PORT}`)
+        })
+
+    } catch(err) {
+        console.error(err)
+    }
+}
+startServer()
