@@ -39,5 +39,3 @@ Streaming-Service/
 
 First Run: `npm install`, Or The Shorthand: `npm i`
 Then Run: `npm start`, Or For Automatic Restart During Development With nodemon, Run: `npm run dev`
-
-Considering my Nodejs version iS 18. So i had to install mssql@10. Check your compatible Node version with mssql.
