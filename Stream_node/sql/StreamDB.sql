@@ -13,6 +13,7 @@ DROP TABLE IF EXISTS Genre
 DROP TABLE IF EXISTS Actor
 DROP TABLE IF EXISTS Favorites
 DROP TABLE IF EXISTS Payment
+DROP TABLE IF EXISTS SubscriptionPlan
 DROP TABLE IF EXISTS Subscription
 DROP TABLE IF EXISTS Download
 DROP TABLE IF EXISTS Episode
@@ -82,8 +83,7 @@ DROP TABLE IF EXISTS Subscription
 CREATE TABLE Subscription (
     subscription_id INT IDENTITY(1,1),
     user_id INT NOT NULL,
-    duration INT NOT NULL,
-    price DECIMAL(8,2) NOT NULL,
+    plan_id INT NOT NULL,
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
 	status VARCHAR(10) DEFAULT 'pending',
@@ -91,7 +91,10 @@ CREATE TABLE Subscription (
     PRIMARY KEY (subscription_id),
     FOREIGN KEY (user_id) REFERENCES Users(user_id)
         ON DELETE CASCADE
-        ON UPDATE CASCADE
+        ON UPDATE CASCADE,
+    FOREIGN KEY(plan_id) REFERENCES SubscriptionPlan(plan_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
 )
 -- CHECK constraint for Subscription's status column
 ALTER TABLE Subscription ADD CONSTRAINT CK_Subscription_Status CHECK (status IN ('active','expired','cancelled','pending'))
@@ -262,4 +265,15 @@ CREATE TABLE Performed_by (
     FOREIGN KEY (actor_id) REFERENCES Actor(actor_id)
         ON DELETE CASCADE
         ON UPDATE CASCADE
+)
+
+-- 15. SubscriptionPlan
+DROP TABLE IF EXISTS SubscriptionPlan
+CREATE TABLE SubscriptionPlan (
+    plan_id INT IDENTITY(1,1),
+    plan_name VARCHAR(20) UNIQUE,
+    duration INT NOT NULL,
+    price DECIMAL(8,2) NOT NULL,
+
+    PRIMARY KEY(plan_id)
 )
