@@ -27,7 +27,7 @@ export default async function Page({ searchParams }) {
 
   return (
     <main className="flex flex-col w-full justify-center items-center max-w-7xl">
-      <header className="bg-gray-800 w-full grid grid-cols-2 gap-y-3 gap-x-2 md:grid-cols-4 border-gray-600 border-4 p-2 text-md md:text-lg my-2 mt-10">
+      <header className="bg-gray-800 w-full grid grid-cols-2 gap-y-3 gap-x-2 md:grid-cols-4 border-gray-600 border-4 text-md md:text-lg pt-2 pb-4 px-2 sm:px-3 my-2 mt-10">
         <ContentSearch value={search} />
         <QuerySelect title={"Series / Movies"} value={type} queryKey="type" options={TYPE_OPTIONS} />
         <QuerySelect title={"Sort By"} value={sort} queryKey="sort" options={SORT_OPTIONS} />
