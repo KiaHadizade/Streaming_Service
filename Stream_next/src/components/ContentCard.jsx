@@ -28,7 +28,6 @@ export function GenreBadge({ genre }) {
 }
 
 const ContentCard = ({ data }) => {
-  const type = data.type;
   const status = data.status;
   const genres = data.genres ? JSON.parse(data.genres) : [];
 
