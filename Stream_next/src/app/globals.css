@@ -129,6 +129,6 @@
   }
 }
 
-.cl-footerItem .🔒️ .cl-internal-1p1qbf7 {
-  display: none;
+.cl-footerItem {
+  display: none !important;
 }

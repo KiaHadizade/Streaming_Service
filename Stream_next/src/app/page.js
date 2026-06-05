@@ -24,7 +24,7 @@ export default async function Page({ searchParams }) {
   const type = params.type || "";
   const sort = params.sort || "";
   const search = params.search || "";
-
+  const fav = params.fav || "";
   return (
     <main className="flex flex-col w-full justify-center items-center max-w-7xl">
       <header className="bg-gray-800 w-full grid grid-cols-2 gap-y-3 gap-x-2 md:grid-cols-4 border-gray-600 border-4 text-md md:text-lg pt-2 pb-4 px-2 sm:px-3 my-2 mt-10">
@@ -33,7 +33,7 @@ export default async function Page({ searchParams }) {
         <QuerySelect title={"Sort By"} value={sort} queryKey="sort" options={SORT_OPTIONS} />
       </header>
       <Suspense fallback={<ContentListLoading />}>
-        <ContentList type={type} sort={sort} search={search} />
+        <ContentList type={type} sort={sort} search={search} fav={fav} />
       </Suspense>
     </main>
   );

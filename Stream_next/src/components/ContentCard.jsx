@@ -1,4 +1,5 @@
 import React from "react";
+import FavoriteButton from "./FavoriteButton";
 import WatchButton from "./WatchButton";
 // http://localhost:3000/api/content
 
@@ -75,8 +76,10 @@ const ContentCard = ({ data }) => {
       <li className="mt-2">
         <p className="text-md text-gray-400">{data.description}</p>
       </li>
-      <li>
-        <WatchButton content_id={data.content_id} />
+      <li className="flex justify-between">
+        <FavoriteButton content_id={data.content_id} />
+        {/* <AddToFavButton content_id={data.content_id} /> */}
+        <WatchButton />
       </li>
     </ul>
   );

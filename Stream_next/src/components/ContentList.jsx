@@ -2,8 +2,8 @@ import React from "react";
 import ContentCard from "./ContentCard";
 import { getContents } from "@/lib/content-api";
 
-const ContentList = async ({ type, sort, search }) => {
-  const contents = await getContents({ type, sort, search });
+const ContentList = async ({ type, sort, search, fav }) => {
+  const contents = await getContents({ type, sort, search, fav });
 
   if (contents?.length > 0) {
     return (
