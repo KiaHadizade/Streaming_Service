@@ -22,6 +22,9 @@ SELECT *
 FROM Subscription
 
 SELECT *
+FROM SubscriptionPlan
+
+SELECT *
 FROM Payment
 
 SELECT *

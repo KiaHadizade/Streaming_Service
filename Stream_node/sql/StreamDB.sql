@@ -13,8 +13,8 @@ DROP TABLE IF EXISTS Genre
 DROP TABLE IF EXISTS Actor
 DROP TABLE IF EXISTS Favorites
 DROP TABLE IF EXISTS Payment
-DROP TABLE IF EXISTS SubscriptionPlan
 DROP TABLE IF EXISTS Subscription
+DROP TABLE IF EXISTS SubscriptionPlan
 DROP TABLE IF EXISTS Download
 DROP TABLE IF EXISTS Episode
 DROP TABLE IF EXISTS Content
@@ -78,7 +78,18 @@ CREATE TABLE Actor (
     PRIMARY KEY (actor_id)
 )
 
--- 5. Subscription
+-- 5. SubscriptionPlan
+DROP TABLE IF EXISTS SubscriptionPlan
+CREATE TABLE SubscriptionPlan (
+    plan_id INT IDENTITY(1,1),
+    plan_name VARCHAR(20) UNIQUE,
+    duration INT NOT NULL,
+    price DECIMAL(8,2) NOT NULL,
+
+    PRIMARY KEY(plan_id)
+)
+
+-- 6. Subscription
 DROP TABLE IF EXISTS Subscription
 CREATE TABLE Subscription (
     subscription_id INT IDENTITY(1,1),
@@ -99,7 +110,7 @@ CREATE TABLE Subscription (
 -- CHECK constraint for Subscription's status column
 ALTER TABLE Subscription ADD CONSTRAINT CK_Subscription_Status CHECK (status IN ('active','expired','cancelled','pending'))
 
--- 6.Episode
+-- 7.Episode
 DROP TABLE IF EXISTS Episode
 CREATE TABLE Episode (
 	episode_id INT IDENTITY(1,1),
@@ -118,7 +129,7 @@ CREATE TABLE Episode (
         ON UPDATE CASCADE
 )
 
--- 7. Review
+-- 8. Review
 DROP TABLE IF EXISTS Review
 CREATE TABLE Review (
     review_id INT IDENTITY(1,1),
@@ -140,7 +151,7 @@ CREATE TABLE Review (
         ON UPDATE NO ACTION
 )
 
--- 8. Payment
+-- 9. Payment
 DROP TABLE IF EXISTS Payment
 CREATE TABLE Payment (
     payment_id INT IDENTITY(1,1),
@@ -160,7 +171,7 @@ CREATE TABLE Payment (
 ALTER TABLE Payment ADD CONSTRAINT CK_Payment_Status CHECK (status IN ('pending','completed','failed'))
 ALTER TABLE Payment ADD CONSTRAINT CK_Payment_Method CHECK (payment_method IN ('credit_card','paypal','bank_transfer','other'))
 
--- 9. Rating
+-- 10. Rating
 DROP TABLE IF EXISTS Rating
 CREATE TABLE Rating (
     user_id INT NOT NULL,
@@ -177,7 +188,7 @@ CREATE TABLE Rating (
     CHECK (rating BETWEEN 1 AND 10)
 )
 
--- 10. Favorites
+-- 11. Favorites
 DROP TABLE IF EXISTS Favorites
 CREATE TABLE Favorites (
     user_id INT NOT NULL,
@@ -192,7 +203,7 @@ CREATE TABLE Favorites (
         ON UPDATE CASCADE
 )
 
--- 11. History
+-- 12. History
 DROP TABLE IF EXISTS History
 CREATE TABLE History (
     history_id INT IDENTITY(1,1),
@@ -212,7 +223,7 @@ CREATE TABLE History (
         ON UPDATE NO ACTION
 )
 
--- 12. Download
+-- 13. Download
 DROP TABLE IF EXISTS Download
 CREATE TABLE Download (
     download_id INT IDENTITY(1,1),
@@ -237,7 +248,7 @@ CREATE TABLE Download (
 -- CHECK constraint for Download's quality column
 ALTER TABLE Download ADD CONSTRAINT CK_Download_quality CHECK (quality IN ('480p','720p','1080p','4K'))
 
--- 13. Categorized_as - (ContentGenre)
+-- 14. Categorized_as - (ContentGenre)
 DROP TABLE IF EXISTS Categorized_as
 CREATE TABLE Categorized_as (
     content_id INT NOT NULL,
@@ -252,7 +263,7 @@ CREATE TABLE Categorized_as (
         ON UPDATE CASCADE
 )
 
--- 14. Performed_by - (ContentActor)
+-- 15. Performed_by - (ContentActor)
 DROP TABLE IF EXISTS Performed_by
 CREATE TABLE Performed_by (
     content_id INT NOT NULL,
@@ -265,15 +276,4 @@ CREATE TABLE Performed_by (
     FOREIGN KEY (actor_id) REFERENCES Actor(actor_id)
         ON DELETE CASCADE
         ON UPDATE CASCADE
-)
-
--- 15. SubscriptionPlan
-DROP TABLE IF EXISTS SubscriptionPlan
-CREATE TABLE SubscriptionPlan (
-    plan_id INT IDENTITY(1,1),
-    plan_name VARCHAR(20) UNIQUE,
-    duration INT NOT NULL,
-    price DECIMAL(8,2) NOT NULL,
-
-    PRIMARY KEY(plan_id)
 )

@@ -146,17 +146,17 @@ INSERT INTO Performed_by (content_id, actor_id) VALUES
 -- Sherlock
 (12, 10)	-- Benedict Cumberbatch
 
--- Subscription
-INSERT INTO Subscription (user_id, start_date, end_date, status) VALUES
-(3, '2025-11-15', '2025-12-15', 'expired'),
-(4, '2025-12-10', '2026-01-09', 'active'),
-(5, '2025-07-01', '2025-12-28', 'cancelled')
-
 -- SubscriptionPlan
 INSERT INTO SubscriptionPlan (plan_name, duration, price) VALUES
-('Basic',30,5.99),
-('Standard',30,9.99),
-('Premium',30,14.99)
+('Basic', 30, 5.99),
+('Standard', 30, 9.99),
+('Premium', 30, 14.99)
+
+-- Subscription
+INSERT INTO Subscription (user_id, plan_id, start_date, end_date, status) VALUES
+(3, 1, '2025-11-15', '2025-12-15', 'expired'),
+(4, 2, '2025-12-10', '2026-01-09', 'active'),
+(5, 3, '2025-07-01', '2025-12-28', 'cancelled')
 
 -- Payment
 INSERT INTO Payment (subscription_id, amount, status, payment_method, transaction_id, paid_at) VALUES
