@@ -1,7 +1,9 @@
 import express from 'express'
 import bcrypt from "bcrypt"
 import sql from "mssql"
+import "dotenv/config"
 import { config } from "./config.js"
+import { isAdmin } from "../middleware/isAdmin.js"
 
 const app = express()
 
@@ -134,6 +136,70 @@ app.post('/login', async (req, res) => {
         console.log(error) // Log server-side errors
         res.status(500).send("Login Failed") // Server error
     }
+})
+
+// Admin Content Route
+app.get("/admin/content", isAdmin, (req,res) => {
+    res.send("Admin Content Management Panel")
+})
+
+// Admin Add Route
+app.post("/admin/content/add", isAdmin, async(req,res) => {
+    try{
+        const {
+            title,
+            release_date,
+            description
+        } = req.body
+
+        await sql.query`
+            INSERT INTO Content
+            (
+                title,
+                release_date,
+                description
+            )
+            VALUES
+            (
+                ${title},
+                ${release_date},
+                ${description}
+            )
+        `
+        res.send("Content added")
+
+    } catch(err) {
+        console.log(err)
+        res.status(500).send("Insert failed")
+    }
+
+})
+
+// Admin Delete Route
+app.delete("/admin/content/:id", isAdmin, async(req,res) => {
+    await sql.query`
+        DELETE FROM Content
+        WHERE content_id = ${req.params.id}
+    `
+    res.send("Deleted")
+})
+
+// Admin Update Route
+app.put("/admin/content/:id", isAdmin, async(req,res) => {
+    const {
+        title,
+        description
+    } = req.body
+
+    await sql.query`
+        UPDATE Content
+        SET
+            title = ${title},
+            description = ${description}
+        WHERE
+            content_id = ${req.params.id}
+    `
+    res.send("Updated")
 })
 
 const PORT = 5000
