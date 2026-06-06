@@ -4,6 +4,7 @@ import sql from "mssql"
 import "dotenv/config"
 import { config } from "./config.js"
 import { isAdmin } from "../middleware/isAdmin.js"
+import { canDownload } from "../middleware/canDownload.js"
 
 const app = express()
 
@@ -200,6 +201,75 @@ app.put("/admin/content/:id", isAdmin, async(req,res) => {
             content_id = ${req.params.id}
     `
     res.send("Updated")
+})
+
+// Download Route
+app.get("/download/:contentId", canDownload, async(req,res) => {
+    const { contentId } = req.params
+    const { user_id } = req.query
+
+    await sql.query`
+        INSERT INTO Downloads
+        (
+            user_id,
+            content_id,
+            download_date
+        )
+        VALUES
+        (
+            ${user_id},
+            ${contentId},
+            GETDATE()
+        )
+    `
+    res.send("Download started")
+})
+
+// Favorite Route
+app.post("/favorite", canDownload, async(req,res) => {
+    const {
+        user_id,
+        content_id
+    } = req.body
+
+    await sql.query`
+        INSERT INTO Favorite
+        (
+            user_id,
+            content_id
+        )
+        VALUES
+        (
+            ${user_id},
+            ${content_id}
+        )
+    `
+    res.send("Added to favorites")
+})
+
+// Review Route
+app.post("/review", canDownload, async(req,res) => {
+    const {
+        user_id,
+        content_id,
+        review_text
+    } = req.body
+
+    await sql.query`
+        INSERT INTO Review
+        (
+            user_id,
+            content_id,
+            review_text
+        )
+        VALUES
+        (
+            ${user_id},
+            ${content_id},
+            ${review_text}
+        )
+    `
+    res.send("Review added")
 })
 
 const PORT = 5000
