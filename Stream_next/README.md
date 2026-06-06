@@ -2,8 +2,15 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, run the development server:
+1. Install project dependencies
+In your project root (where `package.json` is located), run:
+```bash
+npm install
+```
 
+This installs everything listed in `package.json`.
+
+Then try:
 ```bash
 npm run dev
 # or
