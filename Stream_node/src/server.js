@@ -163,6 +163,15 @@ app.post('/login', async (req, res) => {
     }
 })
 
+// =========================
+// Logout User
+// =========================
+app.get("/logout", (req,res) => {
+    req.session.destroy(() => {
+        res.redirect("/")
+    })
+})
+
 // Admin Content Route
 app.get("/admin/content", isAdmin, (req,res) => {
     res.send("Admin Content Management Panel")
