@@ -12,16 +12,15 @@
             Welcome
             <%= user.username %>
         </h2>
-
         <p>
             Role:
             <%= user.role %>
         </p>
-
+        <% if(user && user.role === "admin"){ %>
+            <a href="/admin/content">Admin Panel</a>
+        <% } %>
     <% } else { %>
-
         <h2>Guest User</h2>
-
     <% } %>
 </body>
 </html>
