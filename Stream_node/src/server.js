@@ -5,6 +5,7 @@ import "dotenv/config"
 import { config } from "./config.js"
 import { isAdmin } from "../middleware/isAdmin.js"
 import { canDownload } from "../middleware/canDownload.js"
+import { isAuthenticated  } from "../middleware/isAuthenticated.js"
 import session from "express-session"
 
 const app = express()
@@ -227,9 +228,12 @@ app.put("/admin/content/:id", isAdmin, async(req,res) => {
 })
 
 // Download Route
-app.get("/download/:contentId", canDownload, async(req,res) => {
-    const { contentId } = req.params
-    const { user_id } = req.query
+app.get("/download/:contentId", isAuthenticated, canDownload, async(req,res) => {
+    // const { contentId } = req.params
+    // const { user_id } = req.query
+
+    const userId = req.session.user.id
+    const contentId = req.params.id
 
     await sql.query`
         INSERT INTO Downloads
@@ -240,7 +244,7 @@ app.get("/download/:contentId", canDownload, async(req,res) => {
         )
         VALUES
         (
-            ${user_id},
+            ${userId},
             ${contentId},
             GETDATE()
         )
