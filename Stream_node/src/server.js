@@ -5,6 +5,8 @@ import "dotenv/config"
 import { config } from "./config.js"
 import { isAdmin } from "../middleware/isAdmin.js"
 import { canDownload } from "../middleware/canDownload.js"
+import { isAuthenticated  } from "../middleware/isAuthenticated.js"
+import session from "express-session"
 
 const app = express()
 
@@ -18,9 +20,22 @@ app.set("view engine", "ejs")
 // Serve static files from the "public" directory
 app.use(express.static("public"))
 
+app.use(session({
+        secret: "streaming-service-secret",
+        resave: false,
+        saveUninitialized: false,
+
+        cookie: {
+            maxAge: 1000 * 60 * 60 // 1 hour session
+        }
+    })
+)
+
 // Home page
 app.get('/', (req, res) => {
-  res.render('home')
+    res.render('home', {
+        user: req.session.user
+    })
 })
 
 // Login page
@@ -128,15 +143,33 @@ app.post('/login', async (req, res) => {
 
         // Login successful
         // Render home page with user data
-        res.render("home", {
-            name: user.name,
+        // res.render("home", {
+        //     name: user.name,
+        //     role: user.role
+        // })
+
+        // Save User After Login
+        req.session.user = {
+            id: user.user_id,
+            username: user.username,
             role: user.role
-        })
+        }
+
+        return res.redirect("/")
 
     } catch(error) {
         console.log(error) // Log server-side errors
         res.status(500).send("Login Failed") // Server error
     }
+})
+
+// =========================
+// Logout User
+// =========================
+app.get("/logout", (req,res) => {
+    req.session.destroy(() => {
+        res.redirect("/")
+    })
 })
 
 // Admin Content Route
@@ -204,9 +237,12 @@ app.put("/admin/content/:id", isAdmin, async(req,res) => {
 })
 
 // Download Route
-app.get("/download/:contentId", canDownload, async(req,res) => {
-    const { contentId } = req.params
-    const { user_id } = req.query
+app.get("/download/:contentId", isAuthenticated, canDownload, async(req,res) => {
+    // const { contentId } = req.params
+    // const { user_id } = req.query
+
+    const userId = req.session.user.id
+    const contentId = req.params.id
 
     await sql.query`
         INSERT INTO Downloads
@@ -217,7 +253,7 @@ app.get("/download/:contentId", canDownload, async(req,res) => {
         )
         VALUES
         (
-            ${user_id},
+            ${userId},
             ${contentId},
             GETDATE()
         )
