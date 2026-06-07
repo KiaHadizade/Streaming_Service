@@ -1,6 +1,10 @@
 export function isAdmin(req, res, next) {
-    const role = req.query.role
-    if(role !== "admin") {
+    // const role = req.query.role
+    // if(role !== "admin") {
+    //     return res.status(403).send("Access denied")
+    // }
+
+    if(!req.session.user || req.session.user.role !== "admin") {
         return res.status(403).send("Access denied")
     }
 
