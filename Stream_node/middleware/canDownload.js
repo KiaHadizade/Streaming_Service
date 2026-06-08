@@ -1,7 +1,5 @@
 export function canDownload (req,res,next) {
-    const userId = req.query.user_id
-
-    if(!userId){
+    if(!req.session.user){
         return res.status(401).send("Please login to download")
     }
     
