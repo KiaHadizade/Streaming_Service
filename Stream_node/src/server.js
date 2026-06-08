@@ -251,7 +251,7 @@ app.get("/download/:contentId", isAuthenticated, canDownload, async(req,res) => 
     // const { user_id } = req.query
 
     const userId = req.session.user.id
-    const contentId = req.params.id
+    const contentId = req.params.contentId
 
     await sql.query`
         INSERT INTO Downloads
@@ -271,11 +271,9 @@ app.get("/download/:contentId", isAuthenticated, canDownload, async(req,res) => 
 })
 
 // Favorite Route
-app.post("/favorite", canDownload, async(req,res) => {
-    const {
-        user_id,
-        content_id
-    } = req.body
+app.post("/favorites", canDownload, async(req,res) => {
+    const userId = req.session.user.id
+    const contentId = req.params.contentId
 
     await sql.query`
         INSERT INTO Favorite
@@ -285,8 +283,8 @@ app.post("/favorite", canDownload, async(req,res) => {
         )
         VALUES
         (
-            ${user_id},
-            ${content_id}
+            ${userId},
+            ${contentId}
         )
     `
     res.send("Added to favorites")
@@ -294,11 +292,8 @@ app.post("/favorite", canDownload, async(req,res) => {
 
 // Review Route
 app.post("/review", canDownload, async(req,res) => {
-    const {
-        user_id,
-        content_id,
-        review_text
-    } = req.body
+    const userId = req.session.user.id
+    const { content_id, review_text } = req.body
 
     await sql.query`
         INSERT INTO Review
@@ -309,7 +304,7 @@ app.post("/review", canDownload, async(req,res) => {
         )
         VALUES
         (
-            ${user_id},
+            ${userId},
             ${content_id},
             ${review_text}
         )
