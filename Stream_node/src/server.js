@@ -82,6 +82,9 @@ app.post('/signup', async (req, res) => {
             return res.status(409).send("Email already exists")
         }
         
+        // Debugging Log
+        console.log(req.body)
+
         // Hash the password before storing it to the database
         const hashedPassword = await bcrypt.hash(password, 10) // Salt rounds = 10
         // Insert the new user into the database
@@ -134,6 +137,12 @@ app.post('/login', async (req, res) => {
         if (!user) {
             return res.status(404).send("User not found") // Invalid username or password
         }
+
+        // Debugging log
+        console.log("Form username:", username)
+        console.log("Database user:", user)
+        console.log("Database password:", user?.password)
+
         // Compare entered password with hashed password
         const match = await bcrypt.compare(password, user.password)
         // Password is incorrect
