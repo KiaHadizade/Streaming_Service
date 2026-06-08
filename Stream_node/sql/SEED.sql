@@ -5,12 +5,12 @@ USE StreamDB
 -- *********
 
 -- Users
-INSERT INTO Users (username, password, email, name, last_name, role) VALUES
-('kia_hdzd', '9999', 'kia@gmail.com', 'Amirhossein', 'Hadizade', 'admin'),
-('ali_nj', '8888', 'ali@gmail.com', 'Ali', 'Najafi', 'admin'),
-('ashkan_mo', '1234', 'ashkan@gmail.com', 'Ashkan', 'Mohammadi', 'user'),
-('fatima_sz', '1234', 'fatima@gmail.com', 'Fatima', 'Sadeghzadeh', 'user'),
-('saeed_ab', '333', 'saeed@gmail.com', 'Saeed', 'Abbasi', 'user')
+--INSERT INTO Users (username, password, email, name, last_name, role) VALUES
+--('kia_hdzd', '9999', 'kia@gmail.com', 'Amirhossein', 'Hadizade', 'admin'),
+--('ali_nj', '8888', 'ali@gmail.com', 'Ali', 'Najafi', 'admin'),
+--('ashkan_mo', '1234', 'ashkan@gmail.com', 'Ashkan', 'Mohammadi', 'user'),
+--('fatima_sz', '1234', 'fatima@gmail.com', 'Fatima', 'Sadeghzadeh', 'user'),
+--('saeed_ab', '333', 'saeed@gmail.com', 'Saeed', 'Abbasi', 'user')
 
 
 -- Content
@@ -67,8 +67,8 @@ INSERT INTO Actor (first_name, last_name, birth_date, bio) VALUES
 ('Chris', 'Evans', '1981-06-13', 'American actor known for portraying Steve Rogers / Capitan America'),
 ('Robert', 'Downey Jr.', '1965-04-04', 'American actor known for portraying Iron Man / Tonny Stark')
 
--- Categorized_as - (ContentGenre)
-INSERT INTO Categorized_as (content_id, genre_id) VALUES
+-- ContentGenre
+INSERT INTO ContentGenre (content_id, genre_id) VALUES
 -- Inception
 (1, 1),  -- Action
 (1, 5),  -- Thriller
@@ -112,8 +112,8 @@ INSERT INTO Categorized_as (content_id, genre_id) VALUES
 (12, 11)-- Crime
 
 
--- performed_by - (ContentActor)
-INSERT INTO Performed_by (content_id, actor_id) VALUES
+-- ContentActor
+INSERT INTO ContentActor (content_id, actor_id) VALUES
 -- Inception
 (1, 1),		-- Leonardo DiCaprio
 (1, 2),		-- Joseph Gordon-Levitt
@@ -149,14 +149,14 @@ INSERT INTO Performed_by (content_id, actor_id) VALUES
 -- SubscriptionPlan
 INSERT INTO SubscriptionPlan (plan_name, duration, price) VALUES
 ('Basic', 30, 5.99),
-('Standard', 30, 9.99),
-('Premium', 30, 14.99)
+('Standard', 45, 9.99),
+('Premium', 60, 14.99)
 
 -- Subscription
-INSERT INTO Subscription (user_id, plan_id, start_date, end_date, status) VALUES
-(3, 1, '2025-11-15', '2025-12-15', 'expired'),
-(4, 2, '2025-12-10', '2026-01-09', 'active'),
-(5, 3, '2025-07-01', '2025-12-28', 'cancelled')
+INSERT INTO Subscription (user_id, plan_id, plan_price, start_date, end_date, status) VALUES
+(3, 1, 5.99, '2025-11-15', '2025-12-15', 'expired'),
+(4, 2, 9.99, '2025-12-10', '2026-01-09', 'active'),
+(5, 3, 14.99, '2025-07-01', '2025-12-28', 'cancelled')
 
 -- Payment
 INSERT INTO Payment (subscription_id, amount, status, payment_method, transaction_id, paid_at) VALUES
@@ -184,8 +184,8 @@ INSERT INTO Review (user_id, content_id, comment) VALUES
 INSERT INTO Review (user_id, content_id, parent_id, comment) VALUES
 (5, 1, 1, 'Totally agree! The ending blew my mind.')	-- Saeed -> Inception -> 'Amazing movie with mind-bending plot!'
 
--- Favorites
-INSERT INTO Favorites (user_id, content_id) VALUES
+-- UserFavorite
+INSERT INTO UserFavorite (user_id, content_id) VALUES
 (3, 1),		-- Ashkan -> Inception
 (3, 6),		-- Ashkan -> Breaking Bad
 (4, 2),		-- Fatima -> Interstellar
@@ -205,8 +205,8 @@ INSERT INTO Episode (content_id, season_number, episode_number, title, descripti
 (9, 1, 2, 'Four Marks', 'Geralt faces political intrigue', 60, '2019-12-27'),								-- The Witcher S01E02
 (12, 1, 1, 'A Study in Pink', 'Sherlock investigates a mysterious case', 90, '2010-07-25')					-- Sherlock S01E01
 
--- History
-INSERT INTO History (user_id, content_id, episode_id, watched_at) VALUES
+-- WatchHistory
+INSERT INTO WatchHistory (user_id, content_id, episode_id, watched_at) VALUES
 (3, 1, NULL, '2025-12-01 20:00:00'),	-- Ashkan -> Inception
 (3, 6, 1, '2025-12-05 18:30:00'),		-- Ashkan -> Breaking Bad S01E01
 (3, 6, 2, '2025-12-05 19:30:00'),		-- Ashkan -> Breaking Bad S01E02

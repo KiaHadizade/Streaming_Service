@@ -13,10 +13,10 @@ SELECT *
 FROM Actor
 
 SELECT *
-FROM Categorized_as
+FROM ContentGenre
 
 SELECT *
-FROM Performed_by
+FROM ContentActor
 
 SELECT *
 FROM Subscription
@@ -34,13 +34,13 @@ SELECT *
 FROM Review
 
 SELECT *
-FROM Favorites
+FROM UserFavorite
 
 SELECT *
 FROM Episode
 
 SELECT *
-FROM History
+FROM WatchHistory
 
 SELECT *
 FROM Download
@@ -49,13 +49,13 @@ FROM Download
 --DELETE FROM Content
 --DELETE FROM Genre
 --DELETE FROM Actor
---DELETE FROM Categorized_as
---DELETE FROM Performed_by
+--DELETE FROM ContentGenre
+--DELETE FROM ContentActor
 --DELETE FROM Subscription
 --DELETE FROM Payment
 --DELETE FROM Rating
 --DELETE FROM Review
---DELETE FROM Favorites
+--DELETE FROM UserFavorite
 --DELETE FROM Episode
---DELETE FROM History
+--DELETE FROM WatchHistory
 --DELETE FROM Download

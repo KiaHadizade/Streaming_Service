@@ -19,7 +19,9 @@
         <% if(user && user.role === "admin"){ %>
             <a href="/admin/content">Admin Panel</a>
         <% } %>
+        <a href="/logout">Log Out</a>
     <% } else { %>
+        <a href="/login">Log In</a>
         <h2>Guest User</h2>
     <% } %>
 </body>
