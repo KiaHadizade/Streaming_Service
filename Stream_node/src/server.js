@@ -1,12 +1,11 @@
 import express from 'express'
-import bcrypt from "bcrypt"
 import sql from "mssql"
 import "dotenv/config"
 import { config } from "./config.js"
-import { isAdmin } from "../middleware/isAdmin.js"
-import { canDownload } from "../middleware/canDownload.js"
-import { isAuthenticated  } from "../middleware/isAuthenticated.js"
 import session from "express-session"
+import authRoutes from "../routes/authRoutes.js"
+import adminRoutes from "../routes/adminRoutes.js"
+import contentRoutes from "../routes/contentRoutes.js"
 
 const app = express()
 
@@ -31,291 +30,14 @@ app.use(session({
     })
 )
 
-// Home page
-app.get('/', (req, res) => {
-    res.render('home', {
-        user: req.session.user
-    })
-})
-
-// Login page
-app.get('/login', (req, res) => {
-    res.render('login')
-})
-
-// Signup page
-app.get('/signup', (req, res) => {
-    res.render('signup')
-})
-
-// =========================
-// Register User
-// =========================
-app.post('/signup', async (req, res) => {
-    // Extract user data from the request body
-    const { 
-        username,
-        password,
-        email,
-        name,
-        last_name 
-    } = req.body
-
-    try {
-        const existingUser =
-            await sql.query`
-                SELECT *
-                FROM Users
-                WHERE username = ${username}
-            `
-        if(existingUser.recordset.length > 0) {
-            return res.status(409).send("Username already exists")
-        }
-
-        const existingEmail =
-            await sql.query`
-                SELECT *
-                FROM Users
-                WHERE email = ${email}
-            `
-        if(existingEmail.recordset.length > 0){
-            return res.status(409).send("Email already exists")
-        }
-        
-        // Debugging Log
-        console.log(req.body)
-
-        // Hash the password before storing it to the database
-        const hashedPassword = await bcrypt.hash(password, 10) // Salt rounds = 10
-        // Insert the new user into the database
-        await sql.query`
-            INSERT INTO Users
-            (
-                username,
-                password,
-                email,
-                name,
-                last_name,
-                role
-            )
-            VALUES
-            (
-                ${username},
-                ${hashedPassword},
-                ${email},
-                ${name},
-                ${last_name},
-                'user'
-            )
-        `
-
-        res.send("Registration Successful") // Send success response
-
-    } catch (error) {
-        console.error(error) // Log any errors for debugging
-        res.status(500).send("Registration Failed") // Send generic error response
-    }
-})
-
-// =========================
-// Login User
-// =========================
-app.post('/login', async (req, res) => {
-    // Get login credentials from request body
-    const { username, password } = req.body
-
-    try {
-        // Retrieve user record by username
-        const result = await sql.query`
-            SELECT *
-            FROM Users
-            WHERE username = ${username}
-        `
-        // Get first matching user
-        const user = result.recordset[0]
-        // User doesn't exist
-        if (!user) {
-            return res.status(404).send("User not found") // Invalid username or password
-        }
-
-        // Debugging log
-        console.log("Form username:", username)
-        console.log("Database user:", user)
-        console.log("Database password:", user?.password)
-
-        // Compare entered password with hashed password
-        const match = await bcrypt.compare(password, user.password)
-        // Password is incorrect
-        if (!match) {
-            return res.status(401).send("Wrong password") // Invalid username or password
-        }
-
-        // Login successful
-        // Render home page with user data
-        // res.render("home", {
-        //     name: user.name,
-        //     role: user.role
-        // })
-
-        // Save User After Login
-        req.session.user = {
-            id: user.user_id,
-            username: user.username,
-            role: user.role
-        }
-
-        return res.redirect("/")
-
-    } catch(error) {
-        console.log(error) // Log server-side errors
-        res.status(500).send("Login Failed") // Server error
-    }
-})
-
-// =========================
-// Logout User
-// =========================
-app.get("/logout", (req,res) => {
-    req.session.destroy(() => {
-        res.redirect("/")
-    })
-})
-
-// Admin Content Route
-app.get("/admin/content", isAdmin, (req,res) => {
-    res.send("Admin Content Management Panel")
-})
-
-// Admin Add Route
-app.post("/admin/content/add", isAdmin, async(req,res) => {
-    try{
-        const {
-            title,
-            release_date,
-            description
-        } = req.body
-
-        await sql.query`
-            INSERT INTO Content
-            (
-                title,
-                release_date,
-                description
-            )
-            VALUES
-            (
-                ${title},
-                ${release_date},
-                ${description}
-            )
-        `
-        res.send("Content added")
-
-    } catch(err) {
-        console.log(err)
-        res.status(500).send("Insert failed")
-    }
-
-})
-
-// Admin Delete Route
-app.delete("/admin/content/:id", isAdmin, async(req,res) => {
-    await sql.query`
-        DELETE FROM Content
-        WHERE content_id = ${req.params.id}
-    `
-    res.send("Deleted")
-})
-
-// Admin Update Route
-app.put("/admin/content/:id", isAdmin, async(req,res) => {
-    const {
-        title,
-        description
-    } = req.body
-
-    await sql.query`
-        UPDATE Content
-        SET
-            title = ${title},
-            description = ${description}
-        WHERE
-            content_id = ${req.params.id}
-    `
-    res.send("Updated")
-})
-
-// Download Route
-app.get("/download/:contentId", isAuthenticated, canDownload, async(req,res) => {
-    // const { contentId } = req.params
-    // const { user_id } = req.query
-
-    const userId = req.session.user.id
-    const contentId = req.params.contentId
-
-    await sql.query`
-        INSERT INTO Downloads
-        (
-            user_id,
-            content_id,
-            download_date
-        )
-        VALUES
-        (
-            ${userId},
-            ${contentId},
-            GETDATE()
-        )
-    `
-    res.send("Download started")
-})
-
-// Favorite Route
-app.post("/favorites", canDownload, async(req,res) => {
-    const userId = req.session.user.id
-    const contentId = req.params.contentId
-
-    await sql.query`
-        INSERT INTO Favorite
-        (
-            user_id,
-            content_id
-        )
-        VALUES
-        (
-            ${userId},
-            ${contentId}
-        )
-    `
-    res.send("Added to favorites")
-})
-
-// Review Route
-app.post("/review", canDownload, async(req,res) => {
-    const userId = req.session.user.id
-    const { content_id, review_text } = req.body
-
-    await sql.query`
-        INSERT INTO Review
-        (
-            user_id,
-            content_id,
-            review_text
-        )
-        VALUES
-        (
-            ${userId},
-            ${content_id},
-            ${review_text}
-        )
-    `
-    res.send("Review added")
-})
+// Import Routes
+app.use("/", authRoutes)
+app.use("/", adminRoutes)
+app.use("/", contentRoutes)
 
 const PORT = 5000
 async function startServer() {
     try {
-
         await sql.connect(config)
         console.log("Connected to SQL Server")
 
@@ -323,7 +45,6 @@ async function startServer() {
         app.listen(PORT, () => {
             console.log(`Server running on port ${PORT}`)
         })
-
     } catch(err) {
         console.error(err)
     }
