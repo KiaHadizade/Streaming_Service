@@ -3,6 +3,8 @@
 import { api } from "./api";
 
 export async function getContents(params = {}) {
+  // await new Promise((resolve) => setTimeout(resolve, 2000));
+
   const response = await api.get("/content", {
     params: params,
   });

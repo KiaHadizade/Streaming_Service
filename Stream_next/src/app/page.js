@@ -1,8 +1,50 @@
+// app/page.jsx
+import { Suspense } from "react";
 import ContentList from "@/components/ContentList";
+import QuerySelect from "@/components/QuerySelect";
+import ContentSearch from "@/components/ContentSearch";
+import ContentListLoading from "@/components/ContentListLoading";
+
+const TYPE_OPTIONS = [
+  { value: "all", label: "All" },
+  { value: "movie", label: "Only Movies" },
+  { value: "series", label: "Only Series" },
+];
+
+const SORT_OPTIONS = [
+  { value: "all", label: "Default" },
+  { value: "newest", label: "Newest Releases" },
+  { value: "oldest", label: "Oldest Releases" },
+  { value: "highest-rated", label: "Highest Ratings" },
+  { value: "lowest-rated", label: "Lowest Ratings" },
+];
+
+export default async function Page({ searchParams }) {
+  const params = await searchParams;
+  const type = params.type || "";
+  const sort = params.sort || "";
+  const search = params.search || "";
+  const fav = params.fav || "";
+  return (
+    <main className="flex flex-col w-full justify-center items-center max-w-7xl">
+      <header className="bg-gray-800 w-full grid grid-cols-2 gap-y-3 gap-x-2 md:grid-cols-4 border-gray-600 border-4 text-md md:text-lg pt-2 pb-4 px-2 sm:px-3 my-2 mt-10">
+        <ContentSearch value={search} />
+        <QuerySelect title={"Series / Movies"} value={type} queryKey="type" options={TYPE_OPTIONS} />
+        <QuerySelect title={"Sort By"} value={sort} queryKey="sort" options={SORT_OPTIONS} />
+      </header>
+      <Suspense fallback={<ContentListLoading />}>
+        <ContentList type={type} sort={sort} search={search} fav={fav} />
+      </Suspense>
+    </main>
+  );
+}
+/* import ContentList from "@/components/ContentList";
 import QuerySelect from "@/components/QuerySelect";
 import ContentSearch from "@/components/ContentSearch";
 
 import { getContents } from "@/lib/content-api";
+import { Suspense } from "react";
+import ContentListLoading from "@/components/ContentListLoading";
 
 const TYPE_OPTIONS = [
   { value: "all", label: "All" },
@@ -22,15 +64,20 @@ export default async function Page({ searchParams }) {
   const type = params.type || "";
   const sort = params.sort || "";
   const search = params.search || "";
-  const content = await getContents({ type, sort, search });
+
+  // const content = await getContents({ type, sort, search });
+
   return (
-    <main className="flex flex-col w-full justify-center items-center  max-w-7xl">
-      <header className="w-full grid grid-cols-2 gap-y-3 gap-x-2 md:grid-cols-4 border-sky-900 border-4 p-2 text-md md:text-lg">
+    <main className="flex flex-col w-full justify-center items-center  max-w-7xl ">
+      <header className="bg-gray-800 w-full grid grid-cols-2 gap-y-3 gap-x-2 md:grid-cols-4 border-gray-600 border-4 p-2 text-md md:text-lg my-2 mt-10">
         <ContentSearch value={search} />
         <QuerySelect title={"Series / Movies"} value={type} queryKey="type" options={TYPE_OPTIONS} />
         <QuerySelect title={"Sort By"} value={sort} queryKey="sort" options={SORT_OPTIONS} />
       </header>
-      <ContentList contents={content} />
+      <Suspense fallback={<ContentListLoading />}>
+        <ContentList contents={content} />
+      </Suspense>
     </main>
   );
 }
+ */

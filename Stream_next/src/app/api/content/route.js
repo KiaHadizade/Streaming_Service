@@ -98,6 +98,7 @@ FROM Content c
     return NextResponse.json({ error: "Failed to fetch content" }, { status: 500 });
   }
 }
+
 /* import { NextResponse } from "next/server";
 import { getConnection } from "@/lib/db";
 

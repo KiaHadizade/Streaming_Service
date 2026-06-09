@@ -33,8 +33,8 @@ export default function ContentSearch({ value = "" }) {
   return (
     <div className="col-span-2 max-w-90">
       {" "}
-      <h4 className="text-zinc-200 py-1">Search By Name</h4>
-      <Input value={search} placeholder="Search by title..." onChange={handleChange} />
+      <h4 className="text-zinc-200 py-1">Search By Title</h4>
+      <Input value={search} placeholder="eg: Breaking Bad" onChange={handleChange} />
     </div>
   );
 }

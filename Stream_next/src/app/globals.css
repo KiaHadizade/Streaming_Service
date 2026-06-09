@@ -128,3 +128,7 @@
     @apply font-sans;
   }
 }
+
+.cl-footerItem {
+  display: none !important;
+}

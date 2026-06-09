@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function QuerySelect({ title, value, queryKey, options }) {
   const router = useRouter();
@@ -30,12 +30,14 @@ export default function QuerySelect({ title, value, queryKey, options }) {
           <SelectValue>{selectedLabel}</SelectValue>
         </SelectTrigger>
 
-        <SelectContent>
-          {options.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
+        <SelectContent className="bg-gray-800" alignItemWithTrigger={true}>
+          <SelectGroup>
+            {options.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectGroup>
         </SelectContent>
       </Select>
     </div>

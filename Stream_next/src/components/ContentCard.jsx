@@ -1,4 +1,6 @@
 import React from "react";
+import FavoriteButton from "./FavoriteButton";
+import WatchButton from "./WatchButton";
 // http://localhost:3000/api/content
 
 const genreColors = {
@@ -28,7 +30,6 @@ export function GenreBadge({ genre }) {
 }
 
 const ContentCard = ({ data }) => {
-  const type = data.type;
   const status = data.status;
   const genres = data.genres ? JSON.parse(data.genres) : [];
 
@@ -72,7 +73,14 @@ const ContentCard = ({ data }) => {
           <span className="font-semibold text-sky-500">Cast:</span> {actors.map((actor) => actor.name).join(", ")}
         </li>
       )}
-      <p className="text-md text-gray-400 mt-2">{data.description}</p>
+      <li className="mt-2">
+        <p className="text-md text-gray-400">{data.description}</p>
+      </li>
+      <li className="flex justify-between">
+        <FavoriteButton content_id={data.content_id} />
+        {/* <AddToFavButton content_id={data.content_id} /> */}
+        <WatchButton />
+      </li>
     </ul>
   );
 };
