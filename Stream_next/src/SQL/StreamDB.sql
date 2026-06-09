@@ -5,6 +5,7 @@ GO
 -- Drop Tables in Dependency Order (Children First)
 -- ************************************************
 
+
 DROP TABLE IF EXISTS History
 DROP TABLE IF EXISTS Review
 DROP TABLE IF EXISTS Rating
